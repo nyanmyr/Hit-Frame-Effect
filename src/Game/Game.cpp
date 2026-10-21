@@ -21,6 +21,7 @@ void main()
 	nc().registerComponent<Component::Sprite>();
 	nc().registerComponent<Component::Texture>();
 	nc().registerComponent<Component::Color>();
+	nc().registerComponent<Component::Dash>();
 
 	// event registration
 	nc().registerEvent<Event::SetSpriteOrigin>();
@@ -33,6 +34,7 @@ void main()
 	nc().registerEvent<Event::MouseClick>();
 	nc().registerEvent<Event::MouseMoved>();
 	nc().registerEvent<Event::PlayScene>();
+	nc().registerEvent<Event::Dash>();
 
 	// listener to event linking
 	nc().listen<Event::SetSpriteOrigin>(Listener::setSpriteOrigin);
@@ -46,6 +48,7 @@ void main()
 	nc().listen<Event::MouseMoved>(Listener::hoverButton);
 	nc().listen<Event::MouseMoved>(Listener::idleButton);
 	nc().listen<Event::PlayScene>(Listener::playNextScene);
+	nc().listen<Event::Dash>(Listener::doDash);
 
 	// play the first scene
 	playScene(Scene::MENU);

@@ -20,6 +20,8 @@ namespace Listener
 	void idleButton(Event::MouseMoved event);
 
 	void playNextScene(Event::PlayScene event);
+
+	void doDash(Event::Dash event);
 }
 
 #endif

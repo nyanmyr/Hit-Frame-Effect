@@ -11,6 +11,8 @@ namespace Maker
 {
 	Entity player
 	(
+		const double dashPower,
+		const DeltaTime dashCooldown,
 		const sf::Color col,
 		const Enum::Layer layer,
 		const sf::Vector2f pos,

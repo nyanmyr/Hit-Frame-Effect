@@ -9,6 +9,8 @@ namespace Maker
 {
 	Entity player
 	(
+		const double dashPower,
+		const DeltaTime dashCooldown,
 		const sf::Color col,
 		const Enum::Layer layer,
 		const sf::Vector2f pos,
@@ -108,6 +110,16 @@ namespace Maker
 		(
 			entity,
 			Component::Color{ col }
+		);
+
+		nc().addComponent
+		(
+			entity,
+			Component::Dash
+			{
+				dashPower,
+				dashCooldown
+			}
 		);
 
 		return entity;

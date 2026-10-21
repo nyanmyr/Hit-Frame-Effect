@@ -384,4 +384,21 @@ namespace Listener
 		nc().destroyAll();
 		playScene(event.next);
 	}
+
+	void doDash(Event::Dash event)
+	{
+		// cooldown is not used
+		//std::cout << "power: " << event.dash.power << "\n";
+
+		//std::cout << "X: " << event.velocity.x << "\n";
+		//std::cout << "Y: " << event.velocity.y << "\n";
+
+		event.dash.time = event.dash.cooldown;
+
+		event.velocity.x = event.velocity.x * event.dash.power;
+		event.velocity.y = event.velocity.y * event.dash.power;
+
+		//std::cout << "postX: " << event.velocity.x << "\n";
+		//std::cout << "postY: " << event.velocity.y << "\n";
+	}
 }

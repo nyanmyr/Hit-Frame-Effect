@@ -23,6 +23,7 @@ namespace Control
 		const Entity player,
 		const DeltaTime dt
 	);
+	void doDash(const Entity player);
 }
 
 namespace Update
@@ -34,6 +35,11 @@ namespace Update
 	void enableButtonNextScene();
 	void move(const DeltaTime dt);
 	void drag(const DeltaTime dt);
+	void doDashTimer
+	(
+		const Entity player,
+		const DeltaTime dt
+	);
 	void boundaryBounce
 	(
 		const double left,

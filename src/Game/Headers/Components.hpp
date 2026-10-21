@@ -106,6 +106,13 @@ namespace Component {
 		sf::Color data = sf::Color::White;
 	};
 
+	struct Dash
+	{
+		double power = 0.0;
+		DeltaTime cooldown = 0.0;
+		DeltaTime time = 0.0;
+	};
+
 	namespace Singleton
 	{
 		struct TexturesContainer

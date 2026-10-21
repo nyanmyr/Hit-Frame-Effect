@@ -66,6 +66,12 @@ namespace Event
 	{
 		const Scene next;
 	};
+
+	struct Dash
+	{
+		Component::Dash& dash;
+		Component::Velocity& velocity;
+	};
 }
 
 #endif

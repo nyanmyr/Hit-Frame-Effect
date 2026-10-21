@@ -112,15 +112,18 @@ void Control::doPlayerControl
 	auto& velocityArray = nc().getComponentArray<Component::Velocity>();
 	auto& speedArray = nc().getComponentArray<Component::Speed>();
 	auto& playerControllerArray = nc().getComponentArray<Component::PlayerController>();
+	auto& dashArray = nc().getComponentArray<Component::Dash>();
 
 	if (!velocityArray->hasData(player) ||
 		!speedArray->hasData(player) ||
-		!playerControllerArray->hasData(player))
+		!playerControllerArray->hasData(player) ||
+		!dashArray->hasData(player))
 	{
 		return;
 	}
 
 	auto& velocity = velocityArray->getData(player);
+	const auto& dash = dashArray->getData(player);
 	const auto& playerController = playerControllerArray->getData(player);
 	const auto& speed = speedArray->getData(player);
 
@@ -154,6 +157,11 @@ void Control::doPlayerControl
 	velocity.x += (newSpeedX * dt);
 	velocity.y += (newSpeedY * dt);
 
+	if (dash.time > 0.0)
+	{
+		return;
+	}
+
 	if (velocity.x > velocity.maxX)
 	{
 		velocity.x = velocity.maxX;
@@ -172,6 +180,37 @@ void Control::doPlayerControl
 		velocity.y = velocity.minY;
 	}
 
+}
+void Control::doDash(const Entity player)
+{
+	auto& dashArray = nc().getComponentArray<Component::Dash>();
+	auto& velocityArray = nc().getComponentArray<Component::Velocity>();
+	auto& speedArray = nc().getComponentArray<Component::Speed>();
+
+	if (!dashArray->hasData(player) ||
+		!velocityArray->hasData(player) ||
+		!speedArray->hasData(player))
+	{
+		return;
+	}
+
+	auto& dash = dashArray->getData(player);
+	auto& velocity = velocityArray->getData(player);
+	const auto& speed = speedArray->getData(player);
+
+	if (dash.time > 0.0)
+	{
+		return;
+	}
+
+	nc().call<Event::Dash>
+		(
+			Event::Dash
+			{
+				dash,
+				velocity
+			}
+		);
 }
 
 // -------------------------------------------------------
@@ -395,6 +434,29 @@ void Update::enableButtonNextScene()
 
 static constexpr double BOUNCE_FACTOR = 0.5;
 
+void Update::doDashTimer
+(
+	const Entity player,
+	const DeltaTime dt
+)
+{
+	auto& dashArray = nc().getComponentArray<Component::Dash>();
+
+	if (!dashArray->hasData(player))
+	{
+		return;
+	}
+
+	auto& dash = dashArray->getData(player);
+
+	if (dash.time <= 0.0)
+	{
+		dash.time = 0.0;
+		return;
+	}
+
+	dash.time -= dt;
+}
 void Update::boundaryBounce
 (
 	const double left,

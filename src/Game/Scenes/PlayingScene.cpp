@@ -6,6 +6,9 @@
 #include "../src/Game/Headers/GameManager.hpp"
 #include "../src/Game/Headers/Scenes.hpp"
 
+constexpr double PLAYER_DASH_POWER = 2.5;
+constexpr double PLAYER_DASH_COOLDOWN = 2.0;
+
 void playingScene()
 {
 	// game state variables
@@ -17,6 +20,8 @@ void playingScene()
 	// entity instantiation
 	Entity player = Maker::player
 	(
+		PLAYER_DASH_POWER,
+		PLAYER_DASH_COOLDOWN,
 		sf::Color::Green,
 		Enum::Layer::MAIN,
 		sf::Vector2f
@@ -69,10 +74,24 @@ void playingScene()
 			{
 				Asset::window().close();
 			}
+
+			if (const auto& keyPressed = event->getIf<sf::Event::KeyPressed>()) 
+			{
+				if (keyPressed->scancode == sf::Keyboard::Scancode::Space)
+				{
+					Control::doDash(player);
+				}
+			}
 		}
 
 		// systems
 		Control::doPlayerControl
+		(
+			player,
+			dt
+		);
+
+		Update::doDashTimer
 		(
 			player,
 			dt
