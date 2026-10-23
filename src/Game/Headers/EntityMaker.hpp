@@ -52,6 +52,15 @@ namespace Maker
 		const sf::Vector2f pos,
 		const Enum::TextFormat format
 	);
+	Entity object
+	(
+		const sf::Color col,
+		const Enum::Layer layer,
+		const sf::Vector2f pos,
+		const sf::Vector2f size,
+		const Enum::Texture texture,
+		const Enum::OriginPoint originPoint
+	);
 }
 
 #endif

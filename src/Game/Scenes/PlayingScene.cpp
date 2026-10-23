@@ -58,6 +58,24 @@ void playingScene()
 		Enum::OriginPoint::CENTER
 	);
 
+	Entity object = Maker::object
+	(
+		sf::Color::Red,
+		Enum::Layer::MAIN,
+		sf::Vector2f
+		{
+			250.f,
+			0.f
+		},
+		sf::Vector2f
+		{
+			40.f,
+			40.f
+		},
+		Enum::Texture::TEXTURE_PLACEHOLDER,
+		Enum::OriginPoint::CENTER
+	);
+
 	// onstart systems
 	Start::loadTextures(loadedTextures);
 	Start::loadSprites(loadedTextures);
