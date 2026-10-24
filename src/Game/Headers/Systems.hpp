@@ -47,6 +47,7 @@ namespace Update
 		const double top,
 		const double bottom
 	);
+	void collision(DeltaTime dt);
 }
 
 namespace Render

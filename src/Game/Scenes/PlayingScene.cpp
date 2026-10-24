@@ -121,6 +121,7 @@ void playingScene()
 			-(Config::SCREEN_HEIGHT / 2.0),
 			(Config::SCREEN_HEIGHT / 2.0)
 		);
+		Update::collision(dt);
 		Update::move(dt);
 		Update::drag(dt);
 

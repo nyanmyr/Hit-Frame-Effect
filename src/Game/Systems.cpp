@@ -457,6 +457,7 @@ void Update::doDashTimer
 
 	dash.time -= dt;
 }
+// TODO: has to take into account origin offsets instead
 void Update::boundaryBounce
 (
 	const double left,
@@ -501,6 +502,154 @@ void Update::boundaryBounce
 			pos.y = top + (trans.height / 2.0);
 			velocity.y = -velocity.y * BOUNCE_FACTOR;
 		}
+	}
+}
+
+static bool checkCollision
+(
+	sf::Vector2f a,
+	sf::Vector2f b,
+	sf::Vector2f aTrans,
+	sf::Vector2f bTrans
+)
+{
+	// AABB collision
+	if (a.x + (aTrans.x / 2.f) > b.x - (bTrans.x / 2.f) &&
+		a.x - (aTrans.x / 2.f) < b.x + (bTrans.x / 2.f) &&
+		a.y + (aTrans.y / 2.f) > b.y - (bTrans.y / 2.f) &&
+		a.y - (aTrans.y / 2.f) < b.y + (bTrans.y / 2.f))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+// does not check if there's a collision, just returns the amount
+static float overlapAmount
+(
+	float coordinate1,
+	float coordinate2,
+	float dimension1,
+	float dimension2,
+	float offset1,
+	float offset2
+)
+{
+	return ((dimension1 - offset1) + (dimension2 - offset2)) - std::abs(coordinate1 - coordinate2);
+}
+
+void Update::collision(DeltaTime dt)
+{
+	auto& velocityArray = nc().getComponentArray<Component::Velocity>();
+	auto& positionArray = nc().getComponentArray<Component::Position>();
+	auto& transformArray = nc().getComponentArray<Component::Transform>();
+	auto& originOffsetsArray = nc().getComponentArray<Component::OriginOffsets>();
+
+	for (auto& [entity1, velocity] : velocityArray->getAll())
+	{
+		if (!positionArray->hasData(entity1) ||
+			!transformArray->hasData(entity1) ||
+			!originOffsetsArray->hasData(entity1))
+		{
+			continue;
+		}
+
+		auto& pos1 = positionArray->getData(entity1);
+		auto& trans1 = transformArray->getData(entity1);
+		auto& originOffsets1 = originOffsetsArray->getData(entity1);
+
+		const auto pos1Vector = sf::Vector2f
+		{
+			static_cast<float>(pos1.x),
+			static_cast<float>(pos1.y)
+		};
+
+		const auto trans1Vector = sf::Vector2f
+		{
+			static_cast<float>(trans1.width),
+			static_cast<float>(trans1.height)
+		};
+
+		for (auto& [entity2, transform] : transformArray->getAll())
+		{
+			if (!positionArray->hasData(entity2) ||
+				!transformArray->hasData(entity2) ||
+				!originOffsetsArray->hasData(entity2) ||
+				entity1 == entity2)
+			{
+				continue;
+			}
+
+			auto& pos2 = positionArray->getData(entity2);
+			auto& trans2 = transformArray->getData(entity2);
+			auto& originOffsets2 = originOffsetsArray->getData(entity2);
+
+			const auto pos2Vector = sf::Vector2f
+			{
+				static_cast<float>(pos2.x),
+				static_cast<float>(pos2.y)
+			};
+
+			const auto trans2Vector = sf::Vector2f
+			{
+				static_cast<float>(trans2.width),
+				static_cast<float>(trans2.height)
+			};
+			
+			if (checkCollision
+			(
+				pos1Vector,
+				pos2Vector,
+				trans1Vector,
+				trans2Vector
+			)
+				)
+			{
+				float overlapX = overlapAmount
+				(
+					pos1.x,
+					pos2.x,
+					trans1.width,
+					trans2.width,
+					originOffsets1.x,
+					originOffsets2.x
+				);
+				float overlapY = overlapAmount
+				(
+					pos1.y,
+					pos2.y,
+					trans1.height,
+					trans2.height,
+					originOffsets1.y,
+					originOffsets2.y
+				);
+
+				//std::cout << "overlapX: " << overlapX << "\n";
+				//std::cout << "overlapY: " << overlapY << "\n";
+
+				if (overlapX > overlapY)
+				{
+					// flips the overlap amount if the first entity is behind the second
+					overlapY = pos1.y < pos2.y ? -overlapY : overlapY;
+
+					velocity.y = -velocity.y * BOUNCE_FACTOR;
+					pos1.y += overlapY;
+				}
+				else if (overlapX < overlapY)
+				{
+					overlapX = pos1.x < pos2.x ? -overlapX : overlapX;
+
+					velocity.x = -velocity.x * BOUNCE_FACTOR;
+					pos1.x += overlapX;
+				}
+
+				//std::cout << "test" << "\n";
+			}
+		}
+
+		//pos.x += (velocity.x * dt);
+		//pos.y += (velocity.y * dt);
 	}
 }
 void Update::move(const DeltaTime dt)
