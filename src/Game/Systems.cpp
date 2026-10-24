@@ -542,6 +542,8 @@ static float overlapAmount
 }
 
 constexpr int SKIP_FRAMES = 60;
+constexpr double HIT_VELOCITY_TRESHOLD = 500.0;
+constexpr double HIT_BOUNCE_FACTOR = 1.5;
 
 void Update::skipFrame
 (
@@ -552,10 +554,12 @@ void Update::skipFrame
 	auto& positionArray = nc().getComponentArray<Component::Position>();
 	auto& transformArray = nc().getComponentArray<Component::Transform>();
 	auto& originOffsetsArray = nc().getComponentArray<Component::OriginOffsets>();
+	auto& velocityArray = nc().getComponentArray<Component::Velocity>();
 
 	if (!positionArray->hasData(player) ||
 		!transformArray->hasData(player) ||
-		!originOffsetsArray->hasData(player))
+		!originOffsetsArray->hasData(player) ||
+		!velocityArray->hasData(player))
 	{
 		return;
 	}
@@ -563,6 +567,7 @@ void Update::skipFrame
 	auto& playerPos = positionArray->getData(player);
 	auto& playerTrans = transformArray->getData(player);
 	auto& playerOriginOffsets = originOffsetsArray->getData(player);
+	auto& playerVelocity = velocityArray->getData(player);
 
 	const auto playerPosVector = sf::Vector2f
 	{
@@ -608,9 +613,44 @@ void Update::skipFrame
 			posVector,
 			playerTransVector,
 			transVector
-		)
+		) && 
+			(
+				playerVelocity.x > HIT_VELOCITY_TRESHOLD ||
+				playerVelocity.y > HIT_VELOCITY_TRESHOLD ||
+				playerVelocity.x < -HIT_VELOCITY_TRESHOLD ||
+				playerVelocity.y < -HIT_VELOCITY_TRESHOLD
+			)
 			)
 		{
+			float overlapX = overlapAmount
+			(
+				playerPos.x,
+				pos.x,
+				playerTrans.width,
+				trans.width,
+				playerOriginOffsets.x,
+				originOffsets.x
+			);
+			float overlapY = overlapAmount
+			(
+				playerPos.y,
+				pos.y,
+				playerTrans.height,
+				trans.height,
+				playerOriginOffsets.y,
+				originOffsets.y
+			);
+
+			if (overlapX > overlapY)
+			{
+				playerVelocity.y *= HIT_BOUNCE_FACTOR;
+			}
+			else if (overlapX < overlapY)
+			{
+				playerVelocity.x *= HIT_BOUNCE_FACTOR;
+			}
+
+			//std::cout << "test" << "\n";
 			skipFrame = SKIP_FRAMES;
 		}
 	}

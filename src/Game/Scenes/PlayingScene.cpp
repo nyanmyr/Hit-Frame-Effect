@@ -95,21 +95,27 @@ void playingScene()
 				Asset::window().close();
 			}
 
-			if (const auto& keyPressed = event->getIf<sf::Event::KeyPressed>()) 
+			if (skipFrame <= 0)
 			{
-				if (keyPressed->scancode == sf::Keyboard::Scancode::Space)
+				if (const auto& keyPressed = event->getIf<sf::Event::KeyPressed>())
 				{
-					Control::doDash(player);
+					if (keyPressed->scancode == sf::Keyboard::Scancode::Space)
+					{
+						Control::doDash(player);
+					}
 				}
 			}
 		}
 
 		// systems
-		Control::doPlayerControl
-		(
-			player,
-			dt
-		);
+		if (skipFrame <= 0)
+		{
+			Control::doPlayerControl
+			(
+				player,
+				dt
+			);
+		}
 
 		Update::doDashTimer
 		(
@@ -132,7 +138,7 @@ void playingScene()
 
 		if (skipFrame > 0)
 		{
-			std::cout << "test" << "\n";
+			// std::cout << "test" << "\n";
 			--skipFrame;
 		}
 
