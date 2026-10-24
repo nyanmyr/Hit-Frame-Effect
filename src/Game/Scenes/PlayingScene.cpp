@@ -76,6 +76,8 @@ void playingScene()
 		Enum::OriginPoint::CENTER
 	);
 
+	int skipFrame = 0;
+
 	// onstart systems
 	Start::loadTextures(loadedTextures);
 	Start::loadSprites(loadedTextures);
@@ -121,10 +123,25 @@ void playingScene()
 			-(Config::SCREEN_HEIGHT / 2.0),
 			(Config::SCREEN_HEIGHT / 2.0)
 		);
+		Update::skipFrame
+		(
+			skipFrame,
+			player
+		);
 		Update::collision(dt);
-		Update::move(dt);
-		Update::drag(dt);
 
+		if (skipFrame > 0)
+		{
+			std::cout << "test" << "\n";
+			--skipFrame;
+		}
+
+		else if (skipFrame <= 0)
+		{
+			Update::move(dt);
+			Update::drag(dt);
+		}
+		
 		Asset::window().clear();
 		// render systems
 		Render::doZIndex(renderQueue);

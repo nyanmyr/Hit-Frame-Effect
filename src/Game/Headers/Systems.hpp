@@ -47,6 +47,11 @@ namespace Update
 		const double top,
 		const double bottom
 	);
+	void skipFrame
+	(
+		int& skipFrame,
+		Entity player
+	);
 	void collision(DeltaTime dt);
 }
 

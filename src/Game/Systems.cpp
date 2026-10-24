@@ -541,6 +541,81 @@ static float overlapAmount
 	return ((dimension1 - offset1) + (dimension2 - offset2)) - std::abs(coordinate1 - coordinate2);
 }
 
+constexpr int SKIP_FRAMES = 60;
+
+void Update::skipFrame
+(
+	int& skipFrame,
+	Entity player
+)
+{
+	auto& positionArray = nc().getComponentArray<Component::Position>();
+	auto& transformArray = nc().getComponentArray<Component::Transform>();
+	auto& originOffsetsArray = nc().getComponentArray<Component::OriginOffsets>();
+
+	if (!positionArray->hasData(player) ||
+		!transformArray->hasData(player) ||
+		!originOffsetsArray->hasData(player))
+	{
+		return;
+	}
+
+	auto& playerPos = positionArray->getData(player);
+	auto& playerTrans = transformArray->getData(player);
+	auto& playerOriginOffsets = originOffsetsArray->getData(player);
+
+	const auto playerPosVector = sf::Vector2f
+	{
+		static_cast<float>(playerPos.x),
+		static_cast<float>(playerPos.y)
+	};
+
+	const auto playerTransVector = sf::Vector2f
+	{
+		static_cast<float>(playerTrans.width),
+		static_cast<float>(playerTrans.height)
+	};
+
+	for (auto& [entity, transform] : transformArray->getAll())
+	{
+		if (!positionArray->hasData(entity) ||
+			!transformArray->hasData(entity) ||
+			!originOffsetsArray->hasData(entity) ||
+			player == entity)
+		{
+			continue;
+		}
+
+		auto& pos = positionArray->getData(entity);
+		auto& trans = transformArray->getData(entity);
+		auto& originOffsets = originOffsetsArray->getData(entity);
+
+		const auto posVector = sf::Vector2f
+		{
+			static_cast<float>(pos.x),
+			static_cast<float>(pos.y)
+		};
+
+		const auto transVector = sf::Vector2f
+		{
+			static_cast<float>(trans.width),
+			static_cast<float>(trans.height)
+		};
+
+		if (checkCollision
+		(
+			playerPosVector,
+			posVector,
+			playerTransVector,
+			transVector
+		)
+			)
+		{
+			skipFrame = SKIP_FRAMES;
+		}
+	}
+}
+
 void Update::collision(DeltaTime dt)
 {
 	auto& velocityArray = nc().getComponentArray<Component::Velocity>();
