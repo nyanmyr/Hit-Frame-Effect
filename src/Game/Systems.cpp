@@ -457,7 +457,6 @@ void Update::doDashTimer
 
 	dash.time -= dt;
 }
-// TODO: has to take into account origin offsets instead
 void Update::boundaryBounce
 (
 	const double left,
@@ -469,37 +468,40 @@ void Update::boundaryBounce
 	auto& velocityArray = nc().getComponentArray<Component::Velocity>();
 	auto& positionArray = nc().getComponentArray<Component::Position>();
 	auto& transformArray = nc().getComponentArray<Component::Transform>();
+	auto& originOffsetsArray = nc().getComponentArray<Component::OriginOffsets>();
 
 	for (auto& [entity, velocity] : velocityArray->getAll())
 	{
 		if (!positionArray->hasData(entity) ||
-			!transformArray->hasData(entity))
+			!transformArray->hasData(entity) ||
+			!originOffsetsArray->hasData(entity))
 		{
 			continue;
 		}
 
 		auto& pos = positionArray->getData(entity);
 		auto& trans = transformArray->getData(entity);
+		auto& originOffsets = originOffsetsArray->getData(entity);
 
-		if (pos.x + (trans.width / 2.0) > right)
+		if (pos.x + trans.width - originOffsets.x > right)
 		{
-			pos.x = right - (trans.width / 2.0);
+			pos.x = right - trans.width - originOffsets.x;
 			velocity.x = -velocity.x * BOUNCE_FACTOR;
 		}
-		else if (pos.x - (trans.width / 2.0) < left)
+		else if (pos.x - trans.width - originOffsets.x < left)
 		{
-			pos.x = left + (trans.width / 2.0);
+			pos.x = left + trans.width - originOffsets.x;
 			velocity.x = -velocity.x * BOUNCE_FACTOR;
 		}
 
-		if (pos.y + (trans.height / 2.0) > bottom)
+		if (pos.y + (trans.height - originOffsets.y) > bottom)
 		{
-			pos.y = bottom - (trans.height / 2.0);
+			pos.y = bottom - (trans.height - originOffsets.y);
 			velocity.y = -velocity.y * BOUNCE_FACTOR;
 		}
-		else if (pos.y - (trans.height / 2.0) < top)
+		else if (pos.y - (trans.height - originOffsets.y) < top)
 		{
-			pos.y = top + (trans.height / 2.0);
+			pos.y = top + (trans.height - originOffsets.y);
 			velocity.y = -velocity.y * BOUNCE_FACTOR;
 		}
 	}
