@@ -483,14 +483,14 @@ void Update::boundaryBounce
 		auto& trans = transformArray->getData(entity);
 		auto& originOffsets = originOffsetsArray->getData(entity);
 
-		if (pos.x + trans.width - originOffsets.x > right)
+		if (pos.x + (trans.width - originOffsets.x) > right)
 		{
-			pos.x = right - trans.width - originOffsets.x;
+			pos.x = right - (trans.width - originOffsets.x);
 			velocity.x = -velocity.x * BOUNCE_FACTOR;
 		}
-		else if (pos.x - trans.width - originOffsets.x < left)
+		else if (pos.x - (trans.width - originOffsets.x) < left)
 		{
-			pos.x = left + trans.width - originOffsets.x;
+			pos.x = left + (trans.width - originOffsets.x);
 			velocity.x = -velocity.x * BOUNCE_FACTOR;
 		}
 
