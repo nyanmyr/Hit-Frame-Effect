@@ -542,68 +542,24 @@ static float overlapAmount
 	return ((dimension1 - offset1) + (dimension2 - offset2)) - std::abs(coordinate1 - coordinate2);
 }
 
-void Update::shakeCamera
-(
-	const DeltaTime dt,
-	sf::RenderWindow& window,
-	Component::Singleton::CameraShake& cameraShake
-)
-{
-	sf::View view = window.getView();
-
-	//std::cout << "before:" << "\n";
-	//std::cout << "intensity: " << cameraShake.intensity << "\n";
-	//std::cout << "timer: " << cameraShake.timer << "\n\n";
-
-	if (cameraShake.timer <= 0)
-	{
-		cameraShake.intensity = 0.f;
-		cameraShake.timer = 0.f;
-		view.setCenter
-		(
-			{
-				0.f,
-				0.f
-			}
-		);
-		window.setView(view);
-		return;
-	}
-
-	//std::cout << "after:" << "\n";
-	//std::cout << "intensity: " << cameraShake.intensity << "\n";
-	//std::cout << "timer: " << cameraShake.timer << "\n\n\n";
-
-	cameraShake.timer -= dt;
-
-	std::hash<DeltaTime> hasher;
-	uint32_t hashValue = hasher(dt);
-
-	std::mt19937 gen(hashValue);
-	std::uniform_real_distribution<> distrib(-cameraShake.intensity, cameraShake.intensity);
-
-	//std::cout << "x: " << cam.currentPos.x << "y: " << cam.currentPos.y << "\n";
-	view.setCenter
-	(
-		{
-			static_cast<float>(distrib(gen)),
-			static_cast<float>(distrib(gen))
-		}
-	);
-
-	//cameraShake.intensity -= dt;
-
-	window.setView(view);
-}
-
 constexpr int SKIP_FRAMES = 60;
 constexpr double HIT_VELOCITY_TRESHOLD = 500.0;
 constexpr double HIT_BOUNCE_FACTOR = 1.5;
 
-void Update::skipFrame
+constexpr double INTENSITY_THRESHOLD_MIN = 0.0;
+constexpr double INTENSITY_THRESHOLD_MAX = HIT_VELOCITY_TRESHOLD * 0.5;
+
+template<typename T>
+static T inverseLerp(T value, T min, T max)
+{
+	return (value - min) / (max - min);
+}
+
+void Update::hitEffect
 (
 	int& skipFrame,
-	Entity player
+	Entity player,
+	Component::Singleton::CameraShake& cameraShake
 )
 {
 	auto& positionArray = nc().getComponentArray<Component::Position>();
@@ -696,17 +652,39 @@ void Update::skipFrame
 				originOffsets.y
 			);
 
+			double intensityFactor = 1.0;
+
 			if (overlapX > overlapY)
 			{
+				//std::cout << "before velocityY: " << playerVelocity.y << "\n";
 				playerVelocity.y *= HIT_BOUNCE_FACTOR;
+				//std::cout << "vale: " << (std::abs(playerVelocity.x) - HIT_VELOCITY_TRESHOLD) << "\n";
+				intensityFactor += inverseLerp
+				(
+					std::abs(playerVelocity.y) - HIT_VELOCITY_TRESHOLD,
+					INTENSITY_THRESHOLD_MIN,
+					INTENSITY_THRESHOLD_MAX
+				);
+				//std::cout << "intensityFactor: " << intensityFactor << "\n";
+				//std::cout << "before velocityY: " << playerVelocity.y << "\n";
 			}
 			else if (overlapX < overlapY)
 			{
 				playerVelocity.x *= HIT_BOUNCE_FACTOR;
+				//std::cout << "velocityX: " << playerVelocity.x << "\n";
+				intensityFactor += inverseLerp
+				(
+					std::abs(playerVelocity.x) - HIT_VELOCITY_TRESHOLD,
+					INTENSITY_THRESHOLD_MIN,
+					INTENSITY_THRESHOLD_MAX
+				);
 			}
 
 			//std::cout << "test" << "\n";
 			skipFrame = SKIP_FRAMES;
+
+			cameraShake.intensity = 10.0 * intensityFactor;
+			cameraShake.timer = 0.5;
 		}
 	}
 }
@@ -824,6 +802,61 @@ void Update::collision(DeltaTime dt)
 		//pos.y += (velocity.y * dt);
 	}
 }
+
+void Update::shakeCamera
+(
+	const DeltaTime dt,
+	sf::RenderWindow& window,
+	Component::Singleton::CameraShake& cameraShake
+)
+{
+	sf::View view = window.getView();
+
+	//std::cout << "before:" << "\n";
+	//std::cout << "intensity: " << cameraShake.intensity << "\n";
+	//std::cout << "timer: " << cameraShake.timer << "\n\n";
+
+	if (cameraShake.timer <= 0.0)
+	{
+		cameraShake.intensity = 0.0;
+		cameraShake.timer = 0.0;
+		view.setCenter
+		(
+			{
+				0.f,
+				0.f
+			}
+		);
+		window.setView(view);
+		return;
+	}
+
+	//std::cout << "after:" << "\n";
+	//std::cout << "intensity: " << cameraShake.intensity << "\n";
+	//std::cout << "timer: " << cameraShake.timer << "\n\n\n";
+
+	cameraShake.timer -= dt;
+
+	std::hash<DeltaTime> hasher;
+	uint32_t hashValue = hasher(dt);
+
+	std::mt19937 gen(hashValue);
+	std::uniform_real_distribution<> distrib(-cameraShake.intensity, cameraShake.intensity);
+
+	//std::cout << "x: " << cam.currentPos.x << "y: " << cam.currentPos.y << "\n";
+	view.setCenter
+	(
+		{
+			static_cast<float>(distrib(gen)),
+			static_cast<float>(distrib(gen))
+		}
+	);
+
+	//cameraShake.intensity -= dt;
+
+	window.setView(view);
+}
+
 void Update::move(const DeltaTime dt)
 {
 	auto& velocityArray = nc().getComponentArray<Component::Velocity>();

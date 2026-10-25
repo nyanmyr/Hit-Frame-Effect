@@ -130,18 +130,11 @@ void playingScene()
 			-(Config::SCREEN_HEIGHT / 2.0),
 			(Config::SCREEN_HEIGHT / 2.0)
 		);
-
-		Update::shakeCamera
-		(
-			dt,
-			Asset::window(),
-			cameraShake
-		);
-
-		Update::skipFrame
+		Update::hitEffect
 		(
 			skipFrame,
-			player
+			player,
+			cameraShake
 		);
 		Update::collision(dt);
 
@@ -156,6 +149,13 @@ void playingScene()
 			Update::move(dt);
 			Update::drag(dt);
 		}
+
+		Update::shakeCamera
+		(
+			dt,
+			Asset::window(),
+			cameraShake
+		);
 		
 		Asset::window().clear();
 		// render systems

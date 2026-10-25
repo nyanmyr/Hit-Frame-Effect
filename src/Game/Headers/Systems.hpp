@@ -47,18 +47,19 @@ namespace Update
 		const double top,
 		const double bottom
 	);
+	void hitEffect
+	(
+		int& skipFrame,
+		Entity player,
+		Component::Singleton::CameraShake& cameraShake
+	);
+	void collision(DeltaTime dt);
 	void shakeCamera
 	(
 		const DeltaTime dt,
 		sf::RenderWindow& window,
 		Component::Singleton::CameraShake& cameraShake
 	);
-	void skipFrame
-	(
-		int& skipFrame,
-		Entity player
-	);
-	void collision(DeltaTime dt);
 }
 
 namespace Render
