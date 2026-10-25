@@ -47,6 +47,12 @@ namespace Update
 		const double top,
 		const double bottom
 	);
+	void shakeCamera
+	(
+		const DeltaTime dt,
+		sf::RenderWindow& window,
+		Component::Singleton::CameraShake& cameraShake
+	);
 	void skipFrame
 	(
 		int& skipFrame,

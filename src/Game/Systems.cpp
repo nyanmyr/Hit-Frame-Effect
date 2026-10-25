@@ -6,6 +6,7 @@
 #include <utility>
 #include <vector>
 #include <stdexcept>
+#include <random>
 
 #include "../Engine/NacreCoordinator.hpp"
 #include "Headers/Components.hpp"
@@ -539,6 +540,60 @@ static float overlapAmount
 )
 {
 	return ((dimension1 - offset1) + (dimension2 - offset2)) - std::abs(coordinate1 - coordinate2);
+}
+
+void Update::shakeCamera
+(
+	const DeltaTime dt,
+	sf::RenderWindow& window,
+	Component::Singleton::CameraShake& cameraShake
+)
+{
+	sf::View view = window.getView();
+
+	//std::cout << "before:" << "\n";
+	//std::cout << "intensity: " << cameraShake.intensity << "\n";
+	//std::cout << "timer: " << cameraShake.timer << "\n\n";
+
+	if (cameraShake.timer <= 0)
+	{
+		cameraShake.intensity = 0.f;
+		cameraShake.timer = 0.f;
+		view.setCenter
+		(
+			{
+				0.f,
+				0.f
+			}
+		);
+		window.setView(view);
+		return;
+	}
+
+	//std::cout << "after:" << "\n";
+	//std::cout << "intensity: " << cameraShake.intensity << "\n";
+	//std::cout << "timer: " << cameraShake.timer << "\n\n\n";
+
+	cameraShake.timer -= dt;
+
+	std::hash<DeltaTime> hasher;
+	uint32_t hashValue = hasher(dt);
+
+	std::mt19937 gen(hashValue);
+	std::uniform_real_distribution<> distrib(-cameraShake.intensity, cameraShake.intensity);
+
+	//std::cout << "x: " << cam.currentPos.x << "y: " << cam.currentPos.y << "\n";
+	view.setCenter
+	(
+		{
+			static_cast<float>(distrib(gen)),
+			static_cast<float>(distrib(gen))
+		}
+	);
+
+	//cameraShake.intensity -= dt;
+
+	window.setView(view);
 }
 
 constexpr int SKIP_FRAMES = 60;

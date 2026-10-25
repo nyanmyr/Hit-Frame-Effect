@@ -119,6 +119,12 @@ namespace Component {
 		{
 			std::unordered_map<Enum::Texture, sf::Texture> map;
 		};
+
+		struct CameraShake
+		{
+			double intensity = 0.0;
+			double timer = 0.0;
+		};
 	}
 }
 

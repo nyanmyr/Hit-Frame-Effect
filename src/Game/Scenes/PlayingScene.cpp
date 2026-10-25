@@ -16,6 +16,7 @@ void playingScene()
 	std::queue<Entity> renderQueue;
 
 	Component::Singleton::TexturesContainer loadedTextures{};
+	Component::Singleton::CameraShake cameraShake{};
 
 	// entity instantiation
 	Entity player = Maker::player
@@ -129,6 +130,14 @@ void playingScene()
 			-(Config::SCREEN_HEIGHT / 2.0),
 			(Config::SCREEN_HEIGHT / 2.0)
 		);
+
+		Update::shakeCamera
+		(
+			dt,
+			Asset::window(),
+			cameraShake
+		);
+
 		Update::skipFrame
 		(
 			skipFrame,
