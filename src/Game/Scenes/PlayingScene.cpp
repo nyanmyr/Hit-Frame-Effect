@@ -148,14 +148,13 @@ void playingScene()
 		{
 			Update::move(dt);
 			Update::drag(dt);
+			Update::shakeCamera
+			(
+				dt,
+				Asset::window(),
+				cameraShake
+			);
 		}
-
-		Update::shakeCamera
-		(
-			dt,
-			Asset::window(),
-			cameraShake
-		);
 		
 		Asset::window().clear();
 		// render systems
