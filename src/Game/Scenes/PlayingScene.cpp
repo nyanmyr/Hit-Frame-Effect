@@ -77,6 +77,18 @@ void playingScene()
 		Enum::OriginPoint::CENTER
 	);
 
+	nc().addComponent
+	(
+		object,
+		Component::Velocity
+		{
+			-300.0,
+			-300.0,
+			300.0,
+			300.0
+		}
+	);
+
 	int skipFrame = 0;
 
 	// onstart systems

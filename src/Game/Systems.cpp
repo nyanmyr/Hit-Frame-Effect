@@ -545,6 +545,7 @@ static float overlapAmount
 constexpr int SKIP_FRAMES = 60;
 constexpr double HIT_VELOCITY_TRESHOLD = 500.0;
 constexpr double HIT_BOUNCE_FACTOR = 1.5;
+constexpr double HIT_BOUNCE_DAMP = 0.75;
 
 constexpr double INTENSITY_THRESHOLD_MIN = 0.0;
 constexpr double INTENSITY_THRESHOLD_MAX = HIT_VELOCITY_TRESHOLD * 0.5;
@@ -597,6 +598,7 @@ void Update::hitEffect
 		if (!positionArray->hasData(entity) ||
 			!transformArray->hasData(entity) ||
 			!originOffsetsArray->hasData(entity) ||
+			!velocityArray->hasData(entity) ||
 			player == entity)
 		{
 			continue;
@@ -605,6 +607,7 @@ void Update::hitEffect
 		auto& pos = positionArray->getData(entity);
 		auto& trans = transformArray->getData(entity);
 		auto& originOffsets = originOffsetsArray->getData(entity);
+		auto& velocity = velocityArray->getData(entity);
 
 		const auto posVector = sf::Vector2f
 		{
@@ -656,9 +659,9 @@ void Update::hitEffect
 
 			if (overlapX > overlapY)
 			{
-				//std::cout << "before velocityY: " << playerVelocity.y << "\n";
 				playerVelocity.y *= HIT_BOUNCE_FACTOR;
-				//std::cout << "vale: " << (std::abs(playerVelocity.x) - HIT_VELOCITY_TRESHOLD) << "\n";
+				velocity.y = playerVelocity.y * HIT_BOUNCE_DAMP;
+
 				intensityFactor += inverseLerp
 				(
 					std::abs(playerVelocity.y) - HIT_VELOCITY_TRESHOLD,
@@ -671,7 +674,8 @@ void Update::hitEffect
 			else if (overlapX < overlapY)
 			{
 				playerVelocity.x *= HIT_BOUNCE_FACTOR;
-				//std::cout << "velocityX: " << playerVelocity.x << "\n";
+				velocity.x = playerVelocity.x * HIT_BOUNCE_DAMP;
+
 				intensityFactor += inverseLerp
 				(
 					std::abs(playerVelocity.x) - HIT_VELOCITY_TRESHOLD,
