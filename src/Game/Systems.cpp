@@ -921,7 +921,11 @@ void Render::doZIndex(std::queue<Entity>& renderQueue)
 }
 void Render::render
 (
+	const int skipFrame,
+	sf::Shader& shader,
+	sf::Sprite& sceneSprite,
 	sf::RenderWindow& window,
+	sf::RenderTexture& renderTexture,
 	std::queue<Entity>& renderQueue
 )
 {
@@ -954,7 +958,7 @@ void Render::render
 					pos.y
 				)
 			);
-			window.draw(sprite.body.value());
+			renderTexture.draw(sprite.body.value());
 		}
 
 		if (textArray->hasData(popped))
@@ -969,9 +973,24 @@ void Render::render
 					pos.y
 				)
 			);
-			window.draw(text.box.value());
+			renderTexture.draw(text.box.value());
 		}
 
 		renderQueue.pop();
+	}
+
+	renderTexture.display();
+	window.clear();
+
+	if (skipFrame > 0)
+	{
+		sf::RenderStates states;
+		states.shader = &shader;
+
+		window.draw(sceneSprite, states);
+	}
+	else
+	{
+		window.draw(sceneSprite);
 	}
 }

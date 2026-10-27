@@ -126,12 +126,16 @@ void menuScene()
 		Update::applyButtonClickedAnimation();
 		Update::enableButtonNextScene();
 
-		Asset::window().clear();
+		Asset::renderTexture().clear();
 		// render systems
 		Render::doZIndex(renderQueue);
 		Render::render
 		(
+			0,
+			Asset::shader(),
+			Asset::sceneSprite(),
 			Asset::window(),
+			Asset::renderTexture(),
 			renderQueue
 		);
 		Asset::window().display();

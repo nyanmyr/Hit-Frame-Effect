@@ -67,7 +67,11 @@ namespace Render
 	void doZIndex(std::queue<Entity>& renderQueue);
 	void render
 	(
+		const int skipFrame,
+		sf::Shader& shader,
+		sf::Sprite& sceneSprite,
 		sf::RenderWindow& window,
+		sf::RenderTexture& renderTexture,
 		std::queue<Entity>& renderQueue
 	);
 }

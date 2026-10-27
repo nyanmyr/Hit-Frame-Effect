@@ -168,12 +168,16 @@ void playingScene()
 			);
 		}
 		
-		Asset::window().clear();
+		Asset::renderTexture().clear();
 		// render systems
 		Render::doZIndex(renderQueue);
 		Render::render
 		(
+			skipFrame,
+			Asset::shader(),
+			Asset::sceneSprite(),
 			Asset::window(),
+			Asset::renderTexture(),
 			renderQueue
 		);
 		Asset::window().display();
