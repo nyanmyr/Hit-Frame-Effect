@@ -47,6 +47,12 @@ namespace Enum
 		BOTTOM_RIGHT,
 		CENTER,
 	};
+
+	enum class SoundEffect
+	{
+		HIT,
+		EXPLOSION
+	};
 }
 
 #endif

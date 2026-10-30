@@ -22,6 +22,8 @@ namespace Listener
 	void playNextScene(Event::PlayScene event);
 
 	void doDash(Event::Dash event);
+
+	void playSound(Event::PlaySound event);
 }
 
 #endif

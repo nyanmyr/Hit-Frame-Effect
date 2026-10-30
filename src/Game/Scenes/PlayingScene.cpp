@@ -16,6 +16,7 @@ void playingScene()
 	std::queue<Entity> renderQueue;
 
 	Component::Singleton::TexturesContainer loadedTextures{};
+	Component::Singleton::SoundsContainer loadedSounds{};
 	Component::Singleton::CameraShake cameraShake{};
 
 	// entity instantiation
@@ -94,6 +95,8 @@ void playingScene()
 	// onstart systems
 	Start::loadTextures(loadedTextures);
 	Start::loadSprites(loadedTextures);
+	Start::loadSounds(loadedSounds);
+
 	Start::setSpriteOrigin();
 	Start::setColor();
 
@@ -146,7 +149,8 @@ void playingScene()
 		(
 			skipFrame,
 			player,
-			cameraShake
+			cameraShake,
+			loadedSounds
 		);
 		Update::collision(dt);
 

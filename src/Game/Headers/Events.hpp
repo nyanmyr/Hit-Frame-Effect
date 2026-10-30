@@ -72,6 +72,11 @@ namespace Event
 		Component::Dash& dash;
 		Component::Velocity& velocity;
 	};
+
+	struct PlaySound
+	{
+		const sf::SoundBuffer& buffer;
+	};
 }
 
 #endif

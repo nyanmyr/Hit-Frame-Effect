@@ -2,6 +2,7 @@
 #define ENTITY_MAKER_HPP
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <string>
 #include "../../Engine/Core.hpp"
 #include "Scenes.hpp"
@@ -61,6 +62,7 @@ namespace Maker
 		const Enum::Texture texture,
 		const Enum::OriginPoint originPoint
 	);
+	Entity sound(const sf::SoundBuffer& buffer);
 }
 
 #endif

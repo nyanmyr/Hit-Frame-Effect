@@ -352,4 +352,19 @@ namespace Maker
 		);
 		return entity;
 	}
+
+	Entity sound(const sf::SoundBuffer& buffer)
+	{
+		Entity entity = nc().createEntity();
+
+		//nc().addComponent
+		//(
+		//	entity,
+		//	Component::Sound{ sf::Sound{buffer} }
+		//);
+
+		//nc().getComponent<Component::Sound>(entity).sound.play();
+
+		return entity;
+	}
 }

@@ -2,6 +2,7 @@
 #define COMPONENTS_HPP
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 #include <optional>
 #include <string>
@@ -113,11 +114,21 @@ namespace Component {
 		DeltaTime time = 0.0;
 	};
 
+	struct Sound
+	{
+		sf::Sound sound;
+	};
+
 	namespace Singleton
 	{
 		struct TexturesContainer
 		{
 			std::unordered_map<Enum::Texture, sf::Texture> map;
+		};
+
+		struct SoundsContainer
+		{
+			std::unordered_map<Enum::SoundEffect, sf::SoundBuffer> map;
 		};
 
 		struct CameraShake

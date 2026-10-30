@@ -1,5 +1,6 @@
 #include "Headers/Listeners.hpp"
 #include "Headers/Components.hpp"
+#include "Headers/EntityMaker.hpp"
 #include "Headers/Scenes.hpp"
 
 #include <stdexcept>
@@ -400,5 +401,10 @@ namespace Listener
 
 		//std::cout << "postX: " << event.velocity.x << "\n";
 		//std::cout << "postY: " << event.velocity.y << "\n";
+	}
+
+	void playSound(Event::PlaySound event)
+	{
+		Maker::sound(event.buffer);
 	}
 }

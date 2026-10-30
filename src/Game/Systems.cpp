@@ -87,6 +87,11 @@ void Start::loadSprites(const Component::Singleton::TexturesContainer& loadedTex
 			);
 	}
 }
+void Start::loadSounds(Component::Singleton::SoundsContainer& loadedSounds)
+{
+	loadedSounds.map.emplace(Enum::SoundEffect::HIT, RESOURCES_PATH "Hit.wav");
+	loadedSounds.map.emplace(Enum::SoundEffect::EXPLOSION, RESOURCES_PATH "Explosion.wav");
+}
 void Start::setColor()
 {
 	auto& colorArray = nc().getComponentArray<Component::Color>();
@@ -560,7 +565,8 @@ void Update::hitEffect
 (
 	int& skipFrame,
 	Entity player,
-	Component::Singleton::CameraShake& cameraShake
+	Component::Singleton::CameraShake& cameraShake,
+	const Component::Singleton::SoundsContainer& loadedSounds
 )
 {
 	auto& positionArray = nc().getComponentArray<Component::Position>();
@@ -683,6 +689,12 @@ void Update::hitEffect
 					INTENSITY_THRESHOLD_MAX
 				);
 			}
+
+			nc().call<Event::PlaySound>
+				(
+					Event::PlaySound
+					{ loadedSounds.map.at(Enum::SoundEffect::HIT) }
+				);
 
 			//std::cout << "test" << "\n";
 			skipFrame = SKIP_FRAMES;

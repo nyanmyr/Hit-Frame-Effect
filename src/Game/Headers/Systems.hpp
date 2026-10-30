@@ -13,6 +13,7 @@ namespace Start
 	void setSpriteOrigin();
 	void loadTextures(Component::Singleton::TexturesContainer& loadedTextures);
 	void loadSprites(const Component::Singleton::TexturesContainer& loadedTextures);
+	void loadSounds(Component::Singleton::SoundsContainer& loadedSounds);
 	void setColor();
 }
 
@@ -51,7 +52,8 @@ namespace Update
 	(
 		int& skipFrame,
 		Entity player,
-		Component::Singleton::CameraShake& cameraShake
+		Component::Singleton::CameraShake& cameraShake,
+		const Component::Singleton::SoundsContainer& loadedSounds
 	);
 	void collision(DeltaTime dt);
 	void shakeCamera
