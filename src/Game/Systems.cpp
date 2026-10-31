@@ -112,10 +112,16 @@ void Start::setColor()
 // -------------------------------------------------------
 void Control::doPlayerControl
 (
+	const int skipFrame,
 	const Entity player,
 	const DeltaTime dt
 )
 {
+	if (skipFrame > 0)
+	{
+		return;
+	}
+
 	auto& velocityArray = nc().getComponentArray<Component::Velocity>();
 	auto& speedArray = nc().getComponentArray<Component::Speed>();
 	auto& playerControllerArray = nc().getComponentArray<Component::PlayerController>();
@@ -817,6 +823,32 @@ void Update::collision(DeltaTime dt)
 
 		//pos.x += (velocity.x * dt);
 		//pos.y += (velocity.y * dt);
+	}
+}
+
+void Update::skipFrame(int& skipFrame)
+{
+	if (skipFrame > 0)
+	{
+		// std::cout << "test" << "\n";
+		--skipFrame;
+	}
+}
+
+void Update::playExplosionSound
+(
+	int& skipFrame,
+	Component::Singleton::SoundsContainer& loadedSounds
+)
+{
+	if (skipFrame + 1 == 1)
+	{
+		nc().call<Event::PlaySound>
+			(
+				Event::PlaySound
+				{ loadedSounds.map.at(Enum::SoundEffect::EXPLOSION) }
+			);
+		--skipFrame;
 	}
 }
 

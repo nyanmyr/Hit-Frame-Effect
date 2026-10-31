@@ -125,15 +125,12 @@ void playingScene()
 		}
 
 		// systems
-		// TODO: integrate if statement
-		if (skipFrame <= 0)
-		{
-			Control::doPlayerControl
-			(
-				player,
-				dt
-			);
-		}
+		Control::doPlayerControl
+		(
+			skipFrame,
+			player,
+			dt
+		);
 
 		Update::doDashTimer
 		(
@@ -156,24 +153,15 @@ void playingScene()
 		);
 		Update::collision(dt);
 
-		// TODO: make these into systems for consistency
-		if (skipFrame > 0)
-		{
-			// std::cout << "test" << "\n";
-			--skipFrame;
-		}
+		Update::skipFrame(skipFrame);
 
-		else if (skipFrame <= 0)
+		if (skipFrame <= 0)
 		{
-			if (skipFrame + 1 == 1)
-			{
-				nc().call<Event::PlaySound>
-					(
-						Event::PlaySound
-						{ loadedSounds.map.at(Enum::SoundEffect::EXPLOSION) }
-					);
-				--skipFrame;
-			}
+			Update::playExplosionSound
+			(
+				skipFrame,
+				loadedSounds
+			);
 
 			Update::move(dt);
 			Update::drag(dt);
@@ -184,7 +172,7 @@ void playingScene()
 				cameraShake
 			);
 		}
-		
+
 		Asset::renderTexture().clear();
 		// render systems
 		Render::doZIndex(renderQueue);

@@ -21,6 +21,7 @@ namespace Control
 {
 	void doPlayerControl
 	(
+		const int skipFrame,
 		const Entity player,
 		const DeltaTime dt
 	);
@@ -56,6 +57,12 @@ namespace Update
 		Component::Singleton::SoundsContainer& loadedSounds
 	);
 	void collision(DeltaTime dt);
+	void skipFrame(int& skipFrame);
+	void playExplosionSound
+	(
+		int& skipFrame,
+		Component::Singleton::SoundsContainer& loadedSounds
+	);
 	void shakeCamera
 	(
 		const DeltaTime dt,
