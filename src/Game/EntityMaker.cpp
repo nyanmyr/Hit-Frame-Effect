@@ -357,13 +357,13 @@ namespace Maker
 	{
 		Entity entity = nc().createEntity();
 
-		//nc().addComponent
-		//(
-		//	entity,
-		//	Component::Sound{ sf::Sound{buffer} }
-		//);
+		nc().addComponent
+		(
+			entity,
+			Component::Sound{ std::optional<sf::Sound>().emplace(buffer) }
+		);
 
-		//nc().getComponent<Component::Sound>(entity).sound.play();
+		nc().getComponentArray<Component::Sound>()->getData(entity).sound->play();
 
 		return entity;
 	}

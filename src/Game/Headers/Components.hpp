@@ -116,7 +116,7 @@ namespace Component {
 
 	struct Sound
 	{
-		sf::Sound sound;
+		std::optional<sf::Sound> sound;
 	};
 
 	namespace Singleton

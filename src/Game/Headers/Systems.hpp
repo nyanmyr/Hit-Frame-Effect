@@ -53,7 +53,7 @@ namespace Update
 		int& skipFrame,
 		Entity player,
 		Component::Singleton::CameraShake& cameraShake,
-		const Component::Singleton::SoundsContainer& loadedSounds
+		Component::Singleton::SoundsContainer& loadedSounds
 	);
 	void collision(DeltaTime dt);
 	void shakeCamera

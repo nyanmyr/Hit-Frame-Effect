@@ -89,8 +89,9 @@ void Start::loadSprites(const Component::Singleton::TexturesContainer& loadedTex
 }
 void Start::loadSounds(Component::Singleton::SoundsContainer& loadedSounds)
 {
-	loadedSounds.map.emplace(Enum::SoundEffect::HIT, RESOURCES_PATH "Hit.wav");
-	loadedSounds.map.emplace(Enum::SoundEffect::EXPLOSION, RESOURCES_PATH "Explosion.wav");
+	//SoundEffectsContainer
+	loadedSounds.map.emplace(Enum::SoundEffect::HIT, sf::SoundBuffer(RESOURCES_PATH "Hit.wav"));
+	loadedSounds.map.emplace(Enum::SoundEffect::EXPLOSION, sf::SoundBuffer(RESOURCES_PATH "Explosion.wav"));
 }
 void Start::setColor()
 {
@@ -566,7 +567,7 @@ void Update::hitEffect
 	int& skipFrame,
 	Entity player,
 	Component::Singleton::CameraShake& cameraShake,
-	const Component::Singleton::SoundsContainer& loadedSounds
+	Component::Singleton::SoundsContainer& loadedSounds
 )
 {
 	auto& positionArray = nc().getComponentArray<Component::Position>();
