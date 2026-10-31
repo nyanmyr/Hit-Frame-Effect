@@ -90,7 +90,8 @@ void playingScene()
 		}
 	);
 
-	int skipFrame = 0;
+	// starts at -1 to stop the Explosion sound from playing at the start
+	int skipFrame = -1;
 
 	// onstart systems
 	Start::loadTextures(loadedTextures);
@@ -124,6 +125,7 @@ void playingScene()
 		}
 
 		// systems
+		// TODO: integrate if statement
 		if (skipFrame <= 0)
 		{
 			Control::doPlayerControl
@@ -154,6 +156,7 @@ void playingScene()
 		);
 		Update::collision(dt);
 
+		// TODO: make these into systems for consistency
 		if (skipFrame > 0)
 		{
 			// std::cout << "test" << "\n";
@@ -162,6 +165,16 @@ void playingScene()
 
 		else if (skipFrame <= 0)
 		{
+			if (skipFrame + 1 == 1)
+			{
+				nc().call<Event::PlaySound>
+					(
+						Event::PlaySound
+						{ loadedSounds.map.at(Enum::SoundEffect::EXPLOSION) }
+					);
+				--skipFrame;
+			}
+
 			Update::move(dt);
 			Update::drag(dt);
 			Update::shakeCamera
